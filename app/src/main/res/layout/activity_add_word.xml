@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -12,8 +12,8 @@
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -21,14 +21,14 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_marginTop="8dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/keyword"
                     android:layout_marginLeft="16dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginRight="16dp"
                     android:hint="@string/enter_keyword"
-                    android:textColor="@color/white"/>
+                    android:text="@string/keyword"
+                    android:textColor="@color/white" />
 
                 <EditText
                     android:id="@+id/keywordEditText"
@@ -36,22 +36,24 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="13dp"
                     android:layout_marginRight="13dp"
-                    android:textColor="@color/white"
-                    android:inputType="text"
                     android:imeOptions="flagNoExtractUi"
-                    android:maxLines="1">
-                    <requestFocus/>
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:textColor="@color/white"
+                    tools:ignore="SpeakableTextPresentCheck">
+
+                    <requestFocus />
                 </EditText>
 
                 <TextView
-                    android:layout_marginTop="8dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/translation"
                     android:layout_marginLeft="16dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginRight="16dp"
                     android:hint="@string/enter_translation"
-                    android:textColor="@color/white"/>
+                    android:text="@string/translation"
+                    android:textColor="@color/white" />
 
                 <EditText
                     android:id="@+id/translationEditText"
@@ -59,31 +61,36 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="13dp"
                     android:layout_marginRight="13dp"
-                    android:textColor="@color/white"
-                    android:inputType="text"
+                    android:layout_marginBottom="8dp"
                     android:imeOptions="flagNoExtractUi"
+                    android:inputType="text"
                     android:maxLines="1"
-                    android:layout_marginBottom="8dp"/>
+                    android:textColor="@color/white"
+                    tools:ignore="SpeakableTextPresentCheck" />
 
             </LinearLayout>
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <View
-            android:layout_weight="1"
+        <ImageButton
+            android:id="@+id/image_add"
             android:layout_width="match_parent"
-            android:layout_height="0dp"/>
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:contentDescription="@string/word_picture"
+            android:src="@drawable/ic_baseline_photo_library_100" />
 
         <Button
             android:id="@+id/buttonAdd"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/add"/>
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="12dp"
+            android:text="@string/add" />
 
     </LinearLayout>
+
 
 </ScrollView>

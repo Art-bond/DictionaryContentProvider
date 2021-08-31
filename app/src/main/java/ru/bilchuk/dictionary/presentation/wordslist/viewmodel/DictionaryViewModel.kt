@@ -1,62 +1,38 @@
-package ru.bilchuk.dictionary.presentation.wordslist.viewmodel;
+package ru.bilchuk.dictionary.presentation.wordslist.viewmodel
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import io.reactivex.disposables.Disposable
+import ru.bilchuk.dictionary.domain.interactors.IDictionaryInteractor
+import ru.bilchuk.dictionary.domain.models.DictionaryItem
+import ru.bilchuk.dictionary.utils.ISchedulersProvider
 
-import java.util.List;
-
-import io.reactivex.disposables.Disposable;
-import ru.bilchuk.dictionary.domain.interactors.IDictionaryInteractor;
-import ru.bilchuk.dictionary.domain.models.DictionaryItem;
-import ru.bilchuk.dictionary.utils.ISchedulersProvider;
-
-public class DictionaryViewModel extends ViewModel {
-
-    private final IDictionaryInteractor dictionaryInteractor;
-    private final ISchedulersProvider schedulersProvider;
-
-    private final MutableLiveData<List<DictionaryItem>> dictionaryItemsLiveData = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> progressLiveData = new MutableLiveData<>();
-    private final MutableLiveData<Throwable> errorLiveData = new MutableLiveData<>();
-
-    private Disposable disposable;
-
-    public DictionaryViewModel(@NonNull IDictionaryInteractor dictionaryInteractor,
-                               @NonNull ISchedulersProvider schedulersProvider) {
-        this.dictionaryInteractor = dictionaryInteractor;
-        this.schedulersProvider = schedulersProvider;
+class DictionaryViewModel(
+    private val dictionaryInteractor: IDictionaryInteractor,
+    private val schedulersProvider: ISchedulersProvider
+) : ViewModel() {
+    val dictionaryItemsLiveData = MutableLiveData<List<DictionaryItem>>()
+    val progressLiveData = MutableLiveData<Boolean>()
+    val errorLiveData = MutableLiveData<Throwable>()
+    private var disposable: Disposable? = null
+    fun loadDataAsyncRx() {
+        disposable = dictionaryInteractor.words
+            .doOnSubscribe { disposable: Disposable? -> progressLiveData.postValue(true) }
+            .doAfterTerminate { progressLiveData.postValue(false) }
+            .subscribeOn(schedulersProvider.io())
+            .observeOn(schedulersProvider.ui())
+            .subscribe({ value: List<DictionaryItem> -> dictionaryItemsLiveData.setValue(value) }) { value: Throwable ->
+                errorLiveData.setValue(
+                    value
+                )
+            }
     }
 
-    public void loadDataAsyncRx() {
-        disposable = dictionaryInteractor.getWords()
-                .doOnSubscribe(disposable -> {
-                    progressLiveData.postValue(true);
-                })
-                .doAfterTerminate(() -> progressLiveData.postValue(false))
-                .subscribeOn(schedulersProvider.io())
-                .observeOn(schedulersProvider.ui())
-                .subscribe(dictionaryItemsLiveData::setValue, errorLiveData::setValue);
-    }
-
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        if (disposable != null && !disposable.isDisposed()) {
-            disposable.dispose();
-            disposable = null;
+    override fun onCleared() {
+        super.onCleared()
+        if (disposable != null && !disposable!!.isDisposed) {
+            disposable!!.dispose()
+            disposable = null
         }
-    }
-
-    public MutableLiveData<List<DictionaryItem>> getDictionaryItemsLiveData() {
-        return dictionaryItemsLiveData;
-    }
-
-    public MutableLiveData<Boolean> getProgressLiveData() {
-        return progressLiveData;
-    }
-
-    public MutableLiveData<Throwable> getErrorLiveData() {
-        return errorLiveData;
     }
 }

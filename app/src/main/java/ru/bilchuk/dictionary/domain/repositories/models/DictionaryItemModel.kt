@@ -1,32 +1,10 @@
-package ru.bilchuk.dictionary.domain.repositories.models;
+package ru.bilchuk.dictionary.domain.repositories.models
 
-public class DictionaryItemModel {
+import ru.bilchuk.dictionary.R
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    private long id;
-    private String keyword = "";
-    private String translation = "";
-
-    public String getKeyword() {
-        return keyword;
-    }
-
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
-    }
-
-    public String getTranslation() {
-        return translation;
-    }
-
-    public void setTranslation(String translation) {
-        this.translation = translation;
-    }
+class DictionaryItemModel {
+    var id: Long = 0
+    var keyword: String = ""
+    var translation: String = ""
+    var imageUri: String = "R.drawable.ic_baseline_photo_library_100"
 }

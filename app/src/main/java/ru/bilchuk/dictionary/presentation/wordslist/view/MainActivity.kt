@@ -1,117 +1,101 @@
-package ru.bilchuk.dictionary.presentation.wordslist.view;
+package ru.bilchuk.dictionary.presentation.wordslist.view
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
+import com.google.android.material.snackbar.Snackbar
+import ru.bilchuk.dictionary.R
+import ru.bilchuk.dictionary.data.repositories.DictionaryRepository
+import ru.bilchuk.dictionary.databinding.ActivityMainBinding
+import ru.bilchuk.dictionary.domain.converter.DictionaryItemConverter
+import ru.bilchuk.dictionary.domain.interactors.DictionaryInteractor
+import ru.bilchuk.dictionary.domain.interactors.IDictionaryInteractor
+import ru.bilchuk.dictionary.domain.models.DictionaryItem
+import ru.bilchuk.dictionary.domain.repositories.IDictionaryRepository
+import ru.bilchuk.dictionary.presentation.addword.view.AddWordActivity
+import ru.bilchuk.dictionary.presentation.wordslist.view.adapter.DictionaryAdapter
+import ru.bilchuk.dictionary.presentation.wordslist.viewmodel.DictionaryViewModel
+import ru.bilchuk.dictionary.utils.ISchedulersProvider
+import ru.bilchuk.dictionary.utils.SchedulersProvider
 
-import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
+class MainActivity : AppCompatActivity() {
 
-import com.google.android.material.snackbar.Snackbar;
+    private var viewModel: DictionaryViewModel? = null
+    private var binding: ActivityMainBinding? = null
 
-import java.util.List;
-
-import ru.bilchuk.dictionary.R;
-import ru.bilchuk.dictionary.data.repositories.DictionaryRepository;
-import ru.bilchuk.dictionary.databinding.ActivityMainBinding;
-import ru.bilchuk.dictionary.domain.converter.DictionaryItemConverter;
-import ru.bilchuk.dictionary.domain.interactors.DictionaryInteractor;
-import ru.bilchuk.dictionary.domain.interactors.IDictionaryInteractor;
-import ru.bilchuk.dictionary.domain.models.DictionaryItem;
-import ru.bilchuk.dictionary.domain.repositories.IDictionaryRepository;
-import ru.bilchuk.dictionary.presentation.addword.view.AddWordActivity;
-import ru.bilchuk.dictionary.presentation.wordslist.view.adapter.DictionaryAdapter;
-import ru.bilchuk.dictionary.presentation.wordslist.viewmodel.DictionaryViewModel;
-import ru.bilchuk.dictionary.utils.ISchedulersProvider;
-import ru.bilchuk.dictionary.utils.SchedulersProvider;
-
-public class MainActivity extends AppCompatActivity {
-
-    private static final String TAG = "MainActivity";
-
-    private DictionaryViewModel viewModel;
-    private ActivityMainBinding binding;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        binding.fab.setOnClickListener(v -> startAddWordActivity());
-
-        initUI();
-        createViewModel();
-        observeLiveData();
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding!!.root)
+        binding!!.fab.setOnClickListener { v: View? -> startAddWordActivity() }
+        initUI()
+        createViewModel()
+        observeLiveData()
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        viewModel.loadDataAsyncRx();
+    override fun onStart() {
+        super.onStart()
+        viewModel!!.loadDataAsyncRx()
     }
 
-    private void initUI() {
-        DividerItemDecoration divider =
-                new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL);
-
-        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.divider);
+    private fun initUI() {
+        val divider = DividerItemDecoration(applicationContext, DividerItemDecoration.VERTICAL)
+        val drawable = ContextCompat.getDrawable(this, R.drawable.divider)
         if (drawable != null) {
-            divider.setDrawable(drawable);
+            divider.setDrawable(drawable)
         }
-
-        binding.recyclerView.addItemDecoration(divider);
+        binding!!.recyclerView.addItemDecoration(divider)
     }
 
-    private void createViewModel() {
-        IDictionaryRepository dictionaryRepository = new DictionaryRepository(getApplicationContext());
-        IDictionaryInteractor dictionaryInteractor = new DictionaryInteractor(dictionaryRepository, new DictionaryItemConverter());
-        ISchedulersProvider schedulersProvider = new SchedulersProvider();
-
-        viewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
-            @NonNull
-            @Override
-            public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-                return (T) new DictionaryViewModel(dictionaryInteractor, schedulersProvider);
+    private fun createViewModel() {
+        val dictionaryRepository: IDictionaryRepository = DictionaryRepository(applicationContext)
+        val dictionaryInteractor: IDictionaryInteractor =
+            DictionaryInteractor(dictionaryRepository, DictionaryItemConverter())
+        val schedulersProvider: ISchedulersProvider = SchedulersProvider()
+        viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return DictionaryViewModel(dictionaryInteractor, schedulersProvider) as T
             }
-        }).get(DictionaryViewModel.class);
+        }).get(DictionaryViewModel::class.java)
     }
 
-    private void observeLiveData() {
-        viewModel.getProgressLiveData().observe(this, this::showProgress);
-        viewModel.getDictionaryItemsLiveData().observe(this, this::showWords);
-        viewModel.getErrorLiveData().observe(this, this::showError);
+    private fun observeLiveData() {
+        viewModel!!.progressLiveData.observe(
+            this,
+            { isVisible: Boolean -> showProgress(isVisible) })
+        viewModel!!.dictionaryItemsLiveData.observe(
+            this,
+            { dictionaryItems: List<DictionaryItem> -> showWords(dictionaryItems) })
+        viewModel!!.errorLiveData.observe(this, { throwable: Throwable -> showError(throwable) })
     }
 
-    private void showProgress(boolean isVisible) {
-        Log.i(TAG, "showProgress called with param = " + isVisible);
-
-        binding.progressBar.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    private fun showProgress(isVisible: Boolean) {
+        Log.i(TAG, "showProgress called with param = $isVisible")
+        binding!!.progressBar.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 
-    private void showWords(@NonNull List<DictionaryItem> dictionaryItems) {
-        Log.d(TAG, "showData called dictionaryItems size = " + dictionaryItems.size());
-
-        DictionaryAdapter dictionaryAdapter = new DictionaryAdapter(dictionaryItems);
-
-        binding.recyclerView.setAdapter(dictionaryAdapter);
+    private fun showWords(dictionaryItems: List<DictionaryItem>) {
+        Log.d(TAG, "showData called dictionaryItems size = " + dictionaryItems.size)
+        val dictionaryAdapter = DictionaryAdapter(dictionaryItems)
+        binding!!.recyclerView.adapter = dictionaryAdapter
     }
 
-    private void showError(@NonNull Throwable throwable) {
-        Log.e(TAG, "showError called with error = " + throwable.toString());
-
-        Snackbar.make(binding.getRoot(), throwable.toString(), Snackbar.LENGTH_LONG).show();
+    private fun showError(throwable: Throwable) {
+        Log.e(TAG, "showError called with error = $throwable")
+        Snackbar.make(binding!!.root, throwable.toString(), Snackbar.LENGTH_LONG).show()
     }
 
-    private void startAddWordActivity() {
-        startActivity(new Intent(this, AddWordActivity.class));
+    private fun startAddWordActivity() {
+        startActivity(Intent(this, AddWordActivity::class.java))
+    }
+
+    companion object {
+        private const val TAG = "MainActivity"
     }
 }

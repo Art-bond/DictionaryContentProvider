@@ -12,7 +12,8 @@ public class DBOpenHelper extends SQLiteOpenHelper {
             + " ("
             + DBMetaData.TranslationTableMetaData._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + DBMetaData.TranslationTableMetaData.COLUMN_KEYWORD + " TEXT, "
-            + DBMetaData.TranslationTableMetaData.COLUMN_TRANSLATION + " TEXT"
+            + DBMetaData.TranslationTableMetaData.COLUMN_TRANSLATION + " TEXT,"
+            + DBMetaData.TranslationTableMetaData.COLUMN_IMAGE + " TEXT"
             + ")";
 
     public DBOpenHelper(@Nullable Context context) {

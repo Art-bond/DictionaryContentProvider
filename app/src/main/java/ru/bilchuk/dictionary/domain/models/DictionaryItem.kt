@@ -1,23 +1,8 @@
-package ru.bilchuk.dictionary.domain.models;
+package ru.bilchuk.dictionary.domain.models
 
-public class DictionaryItem {
 
-    private String keyword = "";
-    private String translation = "";
-
-    public String getKeyword() {
-        return keyword;
-    }
-
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
-    }
-
-    public String getTranslation() {
-        return translation;
-    }
-
-    public void setTranslation(String translation) {
-        this.translation = translation;
-    }
-}
+data class DictionaryItem (
+    var keyword: String = "",
+    var translation: String = "",
+    var imageUri: String = "R.drawable.ic_baseline_photo_library_100"
+)

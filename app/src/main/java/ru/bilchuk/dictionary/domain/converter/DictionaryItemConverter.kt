@@ -1,37 +1,31 @@
-package ru.bilchuk.dictionary.domain.converter;
+package ru.bilchuk.dictionary.domain.converter
 
-import java.util.ArrayList;
-import java.util.List;
+import ru.bilchuk.dictionary.domain.models.DictionaryItem
+import ru.bilchuk.dictionary.domain.repositories.models.DictionaryItemModel
+import java.util.*
 
-import ru.bilchuk.dictionary.domain.models.DictionaryItem;
-import ru.bilchuk.dictionary.domain.repositories.models.DictionaryItemModel;
-
-public class DictionaryItemConverter implements IDictionaryItemConverter {
-
-    @Override
-    public DictionaryItemModel convert(DictionaryItem dictionaryItem) {
-        DictionaryItemModel dictionaryItemModel = new DictionaryItemModel();
-        dictionaryItemModel.setKeyword(dictionaryItem.getKeyword());
-        dictionaryItemModel.setTranslation(dictionaryItem.getTranslation());
-
-        return dictionaryItemModel;
+class DictionaryItemConverter : IDictionaryItemConverter {
+    override fun convert(dictionaryItem: DictionaryItem): DictionaryItemModel {
+        val dictionaryItemModel = DictionaryItemModel()
+        dictionaryItemModel.keyword = dictionaryItem.keyword
+        dictionaryItemModel.translation = dictionaryItem.translation
+        dictionaryItemModel.imageUri = dictionaryItem.imageUri
+        return dictionaryItemModel
     }
 
-    @Override
-    public DictionaryItem reverse(DictionaryItemModel dictionaryItemModel) {
-        DictionaryItem dictionaryItem = new DictionaryItem();
-        dictionaryItem.setKeyword(dictionaryItemModel.getKeyword());
-        dictionaryItem.setTranslation(dictionaryItemModel.getTranslation());
-
-        return dictionaryItem;
+    override fun reverse(dictionaryItemModel: DictionaryItemModel): DictionaryItem {
+        val dictionaryItem = DictionaryItem()
+        dictionaryItem.keyword = dictionaryItemModel.keyword
+        dictionaryItem.translation = dictionaryItemModel.translation
+        dictionaryItem.imageUri = dictionaryItemModel.imageUri
+        return dictionaryItem
     }
 
-    @Override
-    public List<DictionaryItem> reverseList(List<DictionaryItemModel> dictionaryItemModel) {
-        List<DictionaryItem> reverseList = new ArrayList<>();
-        for (DictionaryItemModel model : dictionaryItemModel) {
-            reverseList.add(reverse(model));
+    override fun reverseList(dictionaryItemModel: List<DictionaryItemModel>): List<DictionaryItem> {
+        val reverseList: MutableList<DictionaryItem> = ArrayList()
+        for (model in dictionaryItemModel) {
+            reverseList.add(reverse(model))
         }
-        return reverseList;
+        return reverseList
     }
 }

@@ -1,33 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="80dp"
-    android:paddingTop="15dp"
-    android:paddingRight="20dp"
-    android:paddingLeft="16dp"
-    android:orientation="vertical"
-    tools:ignore="RtlHardcoded">
+    android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/translation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:textColor="@color/primary_text"
-        android:textSize="20sp"
-        android:maxLines="3" />
+    <ImageView
+        android:id="@+id/image_word"
+        android:layout_width="@dimen/small_image_size"
+        android:layout_height="@dimen/small_image_size"
+        android:layout_margin="@dimen/margin_one"
+        android:contentDescription="@string/word_picture" />
 
-    <TextView
-        android:id="@+id/keyword"
-        android:layout_marginTop="3dp"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:textSize="14sp"
-        android:textColor="@color/dark_green"
-        android:maxLines="3" />
+        android:minHeight="80dp"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingTop="15dp"
+        android:paddingRight="20dp"
+        tools:ignore="RtlHardcoded">
 
+        <TextView
+            android:id="@+id/translation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:textColor="@color/primary_text"
+            android:textSize="20sp"
+            tools:text="English" />
+
+        <TextView
+            android:id="@+id/keyword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:textColor="@color/dark_green"
+            android:textSize="14sp"
+            tools:text="Russian" />
+
+    </LinearLayout>
 </LinearLayout>

@@ -15,5 +15,7 @@ public final class DBMetaData {
         public static final String COLUMN_KEYWORD = "keyword";
 
         public static final String COLUMN_TRANSLATION = "translation";
+
+        public static final String COLUMN_IMAGE = "image";
     }
 }
